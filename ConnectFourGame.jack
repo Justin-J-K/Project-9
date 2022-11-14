@@ -1,0 +1,72 @@
+class ConnectFourGame {
+    field ConnectFourBoard board;
+    field int currentPlayer;
+
+    constructor ConnectFourGame new() {
+        let board = ConnectFourBoard.new();
+        let currentPlayer = 1;
+
+        // print some intro text
+        do Output.printString("====================== CONNECT FOUR GAME =======================");
+        do Output.println();
+        do Output.printString("Player 1 enter next move 1 to 7 (q to quit):");
+
+        do board.drawBoard();
+
+        return this;
+    }
+
+    // run the game loop
+    method void run() {
+        var boolean exit;
+        var char key;
+        var boolean valid;
+        let exit = false;
+
+        while (~exit) {
+            while (key = 0) { // try to get a key press
+                let key = Keyboard.keyPressed();
+            }
+
+            if (key = 81) { // quit if q
+                let exit = true;
+            }
+
+            // check if key is 1 to 7
+            if (key > 48) {
+                if (key < 56) {
+                    // try to play the piece at that location
+                    let valid = board.playPiece(currentPlayer, key - 49);
+
+                    // if valid move then switch players
+                    if (valid) {
+                        if (currentPlayer = 1) {
+                            let currentPlayer = 2;
+                        } else {
+                            let currentPlayer = 1;
+                        }
+
+                        do Output.moveCursor(2, 7);
+                        do Output.printInt(currentPlayer);
+                    }
+                }
+            }
+
+            // draw the board
+            do board.drawBoard();
+
+            while (~(key = 0)) {
+                let key = Keyboard.keyPressed();
+            }
+        }
+
+        return;
+    }
+
+    // deallocate memory
+    method void dispose() {
+        do board.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+}

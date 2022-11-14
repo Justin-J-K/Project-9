@@ -1,0 +1,199 @@
+class ConnectFourBoard {
+    field Array boardArray;
+    field boolean shouldDraw;
+
+    constructor ConnectFourBoard new() {
+        do generate2DArray();
+        let shouldDraw = true;
+        return this;
+    }
+
+    // draw the board and its pieces (public method)
+    method void drawBoard() {
+        if (~shouldDraw) {
+            return;
+        }
+
+        do draw(150, 40);
+        let shouldDraw = false;
+        return;
+    }
+
+    // draw the board at the x and y coords
+    method void draw(int x, int y) {
+        var int i;
+        var int j;
+        var int boardRow;
+        var int xPos;
+        var int yPos;
+
+        do drawGrid(x, y);
+        
+        let i = 0;
+
+        // draw each piece
+        while (i < 6) {
+            let boardRow = boardArray[i];
+            let j = 0;
+
+            while (j < 7) {
+                let xPos = Math.multiply(j, 30);
+                let xPos = xPos + 14;
+                let xPos = xPos + x;
+                let yPos = Math.multiply(i, 30);
+                let yPos = yPos + 14;
+                let yPos = yPos + y;
+
+                // draw white for player 1 and black for player 2
+                if (boardRow[j] = 1) {
+                    do drawWhiteCircle(xPos, yPos);
+                }
+                if (boardRow[j] = 2) {
+                    do drawBlackCircle(xPos, yPos);
+                }
+
+                let j = j + 1;
+            }
+
+            let i = i + 1;
+        }
+
+        return;
+    }
+
+    // draw the grid that the pieces will be in
+    method void drawGrid(int x, int y) {
+        var int i;
+        var int temp;
+
+        do Screen.setColor(true);
+        do Screen.drawRectangle(x, y, x + 209, y + 179);
+        do Screen.setColor(false);
+        do Screen.drawRectangle(x + 2, y + 2, x + 207, y + 177);
+        do Screen.setColor(true);
+
+        let i = 0;
+
+        // draw the horizontal lines
+        while (i < 5) {
+            let temp = Math.multiply(i, 30);
+            let temp = temp + 30;
+            let temp = temp + y;
+
+            do Screen.drawLine(x, temp, x + 209, temp);
+            do Screen.drawLine(x, temp - 1, x + 209, temp - 1);
+            let i = i + 1;
+        }
+
+        let i = 0;
+
+        // draw the vertical lines
+        while (i < 6) {
+            let temp = Math.multiply(i, 30);
+            let temp = temp + 30;
+            let temp = temp + x;
+
+            do Screen.drawLine(temp, y, temp, y + 179);
+            do Screen.drawLine(temp - 1, y, temp - 1, y + 179);
+            let i = i + 1;
+        }
+
+        return;
+    }
+
+    method void drawBlackCircle(int x, int y) {
+        do Screen.setColor(true);
+        do Screen.drawCircle(x, y, 13);
+        return;
+    }
+
+    method void drawWhiteCircle(int x, int y) {
+        do drawBlackCircle(x, y);
+        do Screen.setColor(false);
+        do Screen.drawCircle(x, y, 11);
+        return;
+    }
+
+    // try to play the piece at a location from 0 to 6
+    method boolean playPiece(int player, int location) {
+        var int nextAvailable;
+        var Array boardRow;
+        let nextAvailable = findNextAvailable(location);
+
+        if (nextAvailable < 0) {
+            return false;
+        }
+
+        let boardRow = boardArray[nextAvailable];
+        let boardRow[location] = player;
+        let shouldDraw = true;
+
+        return true;
+    }
+
+    // find the next available slot in a location
+    // returns -1 if not found
+    method int findNextAvailable(int location) {
+        var int i;
+        var int nextAvailable;
+        var Array boardRow;
+        let i = 0;
+        let nextAvailable = -1;
+
+        while (i < 6) {
+            
+            let boardRow = boardArray[i];
+            
+            if (boardRow[location] > 0) {
+                return nextAvailable;
+            }
+
+            let nextAvailable = nextAvailable + 1;
+            let i = i + 1;
+        }
+
+        return nextAvailable;
+    }
+
+    // initialize the 2D array for the board and initialize to all zeros
+    method void generate2DArray() {
+        var int i;
+        var Array boardRow;
+        var int j;
+        let boardArray = Array.new(6);
+
+        let i = 0;
+
+        while (i < 6) {
+            let boardRow = Array.new(7);
+            let j = 0;
+
+            while (j < 7) {
+                let boardRow[j] = 0;
+                let j = j + 1;
+            }
+
+            let boardArray[i] = boardRow;
+            let i = i + 1;
+        }
+
+        return;
+    }
+
+    // deallocate memory
+    method void dispose() {
+        var Array boardRow;
+        var int i;
+        let i = 0;
+
+        while (i < 6) {
+            let boardRow = boardArray[i];
+            do Memory.deAlloc(boardRow);
+            let i = i + 1;
+        }
+
+        do Memory.deAlloc(boardArray);
+        do Memory.deAlloc(this);
+        return;
+    }
+}

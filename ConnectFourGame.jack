@@ -21,6 +21,7 @@ class ConnectFourGame {
         var boolean exit;
         var char key;
         var boolean valid;
+        var int winner;
         let exit = false;
 
         while (~exit) {
@@ -54,6 +55,18 @@ class ConnectFourGame {
 
             // draw the board
             do board.drawBoard();
+            let winner = board.getWinningPlayer();
+
+            if (~(winner = 0)) {
+                do Output.moveCursor(1, 0);
+                do Output.printString("Player ");
+                do Output.moveCursor(1, 7);
+                do Output.printInt(winner);
+                do Output.moveCursor(1, 8);
+                do Output.printString(" wins!                               ");
+
+                let exit = true;
+            }
 
             while (~(key = 0)) {
                 let key = Keyboard.keyPressed();

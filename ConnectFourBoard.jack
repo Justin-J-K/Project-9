@@ -1,6 +1,7 @@
 class ConnectFourBoard {
     field Array boardArray;
     field boolean shouldDraw;
+    field int winningPlayer;
 
     constructor ConnectFourBoard new() {
         do generate2DArray();
@@ -128,6 +129,8 @@ class ConnectFourBoard {
         let boardRow[location] = player;
         let shouldDraw = true;
 
+        do checkWinningPlayer(player);
+
         return true;
     }
 
@@ -178,6 +181,71 @@ class ConnectFourBoard {
         }
 
         return;
+    }
+
+    // check if the player won the game
+    method void checkWinningPlayer(int player) {
+        var int i;
+        var int j;
+        var Array boardRow1;
+        var Array boardRow2;
+        var Array boardRow3;
+        var Array boardRow4;
+
+        let i = 0;
+
+        // iterate through the entire board
+        while (i < 6) {
+            let j = 0;
+
+            while (j < 7) {
+                if (i < 3) {
+                    let boardRow1 = boardArray[i];
+                    let boardRow2 = boardArray[i + 1];
+                    let boardRow3 = boardArray[i + 2];
+                    let boardRow4 = boardArray[i + 3];
+
+                    // vertical check
+                    if (boardRow1[j] = player & boardRow2[j] = player & boardRow3[j] = player & boardRow4[j] = player) {
+                        let winningPlayer = player;
+                        return;
+                    }
+
+                    if (j < 4) { // diagonal check 1
+                        if (boardRow1[j] = player & boardRow2[j + 1] = player & boardRow3[j + 2] = player & boardRow4[j + 3] = player) {
+                            let winningPlayer = player;
+                            return;
+                        }   
+                    }
+
+                    if (j > 2) { // diagonal check 2
+                        if (boardRow1[j] = player & boardRow2[j - 1] = player & boardRow3[j - 2] = player & boardRow4[j - 3] = player) {
+                            let winningPlayer = player;
+                            return;
+                        }
+                    }
+                }
+
+                if (j < 4) {    // horizontal check
+                    let boardRow1 = boardArray[i];
+
+                    if (boardRow1[j] = player & boardRow1[j + 1] = player & boardRow1[j + 2] = player & boardRow1[j + 3] = player) {
+                        let winningPlayer = player;
+                        return;
+                    }
+                }
+
+                let j = j + 1;
+            }
+
+            let i = i + 1;
+        }
+
+        return;
+    }
+
+    method int getWinningPlayer() {
+        return winningPlayer;
     }
 
     // deallocate memory
